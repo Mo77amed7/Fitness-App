@@ -1,13 +1,20 @@
 <template>
   <header>
-    <h1>SMOLGRAM</h1>
+    <a
+      href="
+    "
+      class="logo"
+    >
+      <img src="/public/Logo.jpg" alt="Logo" />
+      <h1>SMOLGRAM</h1></a
+    >
   </header>
   <main>
     <slot></slot>
   </main>
   <footer>
     <p>Created By</p>
-    <a href="https://github.com/Mo77amed7" target="_blank">
+    <a class="git-profile" href="https://github.com/Mo77amed7" target="_blank">
       <img
         src="https://avatars.githubusercontent.com/u/99067002?v=4"
         alt="Profile"
@@ -19,6 +26,22 @@
 </template>
 
 <style scoped>
+header,
+main {
+  width: 70%;
+  margin: auto;
+}
+.logo {
+  display: flex;
+  align-items: center;
+}
+h1 {
+  padding: 8px;
+  color: #2563eb;
+}
+.logo img {
+  width: 30px;
+}
 footer {
   display: flex;
   flex-direction: column;
@@ -27,7 +50,7 @@ footer {
 a {
   text-decoration: none;
 }
-a {
+a.git-profile {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -35,11 +58,15 @@ a {
   border-radius: 6px;
   padding: 2px;
 }
-a:hover {
+a.git-profile:hover {
   border-color: #2563eb;
 }
-img {
+.git-profile img {
   width: 25px;
   border-radius: 50%;
+}
+.git-profile p {
+  margin-top: 3px;
+  color: black;
 }
 </style>
