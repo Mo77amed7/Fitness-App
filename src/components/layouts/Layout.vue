@@ -5,7 +5,7 @@
     "
       class="logo"
     >
-      <img src="/public/Logo.jpg" alt="Logo" />
+      <img src="/public/Logo.jpg" alt="Logo for SMOLGRAM" />
       <h1>SMOLGRAM</h1></a
     >
   </header>
@@ -28,7 +28,7 @@
 <style scoped>
 header,
 main {
-  width: 70%;
+  max-width: 800px;
   margin: auto;
 }
 .logo {
