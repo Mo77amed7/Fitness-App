@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="card">
-      <p>
+      <p style="display: inline-block">
         Day
         {{
           selectedProgram < 9
@@ -9,9 +9,21 @@
             : selectedProgram + 1
         }}
       </p>
-      <i class="fa-solid fa-dumbbell" v-if="selectedProgram % 3 == 0"></i>
-      <i class="fa-solid fa-weight-hanging" v-if="selectedProgram % 3 == 1"></i>
-      <i class="fa-solid fa-bolt" v-if="selectedProgram % 3 == 2"></i>
+      <i
+        style="float: right"
+        class="fa-solid fa-dumbbell"
+        v-if="selectedProgram % 3 == 0"
+      ></i>
+      <i
+        style="float: right"
+        class="fa-solid fa-weight-hanging"
+        v-if="selectedProgram % 3 == 1"
+      ></i>
+      <i
+        style="float: right"
+        class="fa-solid fa-bolt"
+        v-if="selectedProgram % 3 == 2"
+      ></i>
       <h1>Push Workout</h1>
     </div>
     <table class="warmup">
@@ -27,7 +39,11 @@
         <tr v-for="(warm, index) in warmup" :key="index">
           <td>
             <p>{{ warm.name }}</p>
-            <button type="button" aria-label="Exercise details">
+            <button
+              @click="showExercise(warm.name)"
+              type="button"
+              aria-label="Exercise details"
+            >
               <i class="fa-regular fa-circle-question"></i>
             </button>
           </td>
@@ -56,7 +72,11 @@
         <tr v-for="(work, index) in workout" :key="index">
           <td>
             <p>{{ work.name }}</p>
-            <button type="button" aria-label="Exercise details">
+            <button
+              @click="showExercise(work.name)"
+              type="button"
+              aria-label="Exercise details"
+            >
               <i class="fa-regular fa-circle-question"></i>
             </button>
           </td>
@@ -72,6 +92,15 @@
         </tr>
       </tbody>
     </table>
+    <port @close-des="closeDes" v-if="selectedDesName">
+      <h1>{{ selectedDesName }}</h1>
+      <div>
+        <small>Description</small>
+        <p>
+          {{ selectedDesP }}
+        </p>
+      </div>
+    </port>
     <div class="actions card">
       <button type="button">
         Save & Exit<i class="fa-solid fa-floppy-disk"></i>
@@ -82,10 +111,22 @@
 </template>
 
 <script setup>
-import { workoutProgram } from "@/utils/index";
+import { ref } from "vue";
+
+import { workoutProgram, exerciseDescriptions } from "@/utils/index";
+import port from "@/components/Portal.vue";
 console.log(workoutProgram);
 const selectedProgram = 0;
 const { workout, warmup } = workoutProgram[selectedProgram];
+const selectedDesName = ref(null);
+const selectedDesP = ref("");
+function showExercise(exercise) {
+  selectedDesName.value = exercise;
+  selectedDesP.value = exerciseDescriptions[exercise];
+}
+function closeDes() {
+  selectedDesName.value = null;
+}
 </script>
 
 <style scoped>
@@ -113,6 +154,7 @@ tbody tr:nth-child(even):hover td {
 }
 table p {
   display: inline-block;
+  margin-right: 5px;
 }
 .workout tr:hover button,
 .warmup tr:hover button {
