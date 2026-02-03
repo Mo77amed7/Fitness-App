@@ -1,12 +1,11 @@
 <template>
   <header>
-    <a
-      href="
-    "
+    <router-link
+      to="/"
       class="logo"
     >
       <img src="/public/Logo.jpg" alt="Logo for SMOLGRAM" />
-      <h1>SMOLGRAM</h1></a
+      <h1>SMOLGRAM</h1></router-link
     >
   </header>
   <main>

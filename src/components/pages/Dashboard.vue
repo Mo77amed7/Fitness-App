@@ -6,7 +6,7 @@
         <h3>Daily Tip</h3>
         <p>{{ tip }}</p>
       </div>
-      <a href="">Start Workout</a>
+      <router-link to="/workout">Start Workout</router-link>
     </div>
   </section>
   <section>

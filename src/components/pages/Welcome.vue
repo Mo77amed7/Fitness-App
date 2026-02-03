@@ -39,7 +39,7 @@
         <br />Do you accept
       </p>
 
-      <a href="">Begin<i class="fa-solid fa-right-long"></i></a>
+      <router-link to="/dashboard">Begin<i class="fa-solid fa-right-long"></i></router-link>
     </div>
   </section>
 </template>
