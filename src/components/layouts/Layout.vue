@@ -4,16 +4,18 @@
       <img src="@/assests/Logo.jpg" alt="Logo for SMOLGRAM" />
       <h1>SMOLGRAM</h1></router-link
     >
-    <div class="user-actions">
-      <div v-if="store.user" class="profile">
-        <img :src="store.user.photoURL" alt="User" class="avatar" />
-        <button @click="store.logoutUser" class="btn-logout">Logout</button>
-      </div>
-      <button v-else @click="store.loginUser" class="btn-login">
-        Login <i class="fa-brands fa-google"></i>
-      </button>
-    </div>
   </header>
+  <nav class="breadcrumbs" v-if="breadcrumbs.length > 1">
+    <ol class="breadcrumb-list">
+      <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item">
+        <router-link v-if="crumb.path" :to="crumb.path" class="breadcrumb-link">
+          {{ crumb.label }}
+        </router-link>
+        <span v-else class="breadcrumb-current">{{ crumb.label }}</span>
+        <span v-if="index < breadcrumbs.length - 1" class="breadcrumb-separator">/</span>
+      </li>
+    </ol>
+  </nav>
   <main>
     <slot></slot>
   </main>
@@ -31,14 +33,28 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { useWorkoutStore } from "@/stores/workoutStore";
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-const store = useWorkoutStore();
+const route = useRoute()
 
-onMounted(() => {
-  store.initAuth();
-});
+const breadcrumbs = computed(() => {
+  const crumbs = [
+    { label: '🏠 Home', path: '/' }
+  ]
+
+  if (route.name === 'dashboard') {
+    crumbs.push({ label: 'Dashboard', path: null })
+  } else if (route.name === 'welcome') {
+    crumbs.push({ label: 'Welcome', path: null })
+  } else if (route.name === 'workout') {
+    crumbs.push({ label: 'Dashboard', path: '/dashboard' })
+    const dayNum = route.params.day ? parseInt(route.params.day) + 1 : 1
+    crumbs.push({ label: `Workout - Day ${String(dayNum).padStart(2, '0')}`, path: null })
+  }
+
+  return crumbs
+})
 </script>
 <style scoped>
 header,
@@ -56,6 +72,42 @@ h1 {
 }
 .logo img {
   width: 30px;
+}
+.breadcrumbs {
+  max-width: 800px;
+  margin: 12px auto;
+  padding: 0 16px;
+}
+.breadcrumb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+}
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb-link {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.breadcrumb-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+.breadcrumb-current {
+  color: #64748b;
+  font-weight: 500;
+}
+.breadcrumb-separator {
+  color: #cbd5e1;
 }
 .user-actions {
   display: flex;
