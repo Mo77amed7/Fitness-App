@@ -1,12 +1,18 @@
 <template>
   <header>
-    <router-link
-      to="/"
-      class="logo"
-    >
-      <img src="/public/Logo.jpg" alt="Logo for SMOLGRAM" />
+    <router-link to="/" class="logo">
+      <img src="@/assests/Logo.jpg" alt="Logo for SMOLGRAM" />
       <h1>SMOLGRAM</h1></router-link
     >
+    <div class="user-actions">
+      <div v-if="store.user" class="profile">
+        <img :src="store.user.photoURL" alt="User" class="avatar" />
+        <button @click="store.logoutUser" class="btn-logout">Logout</button>
+      </div>
+      <button v-else @click="store.loginUser" class="btn-login">
+        Login <i class="fa-brands fa-google"></i>
+      </button>
+    </div>
   </header>
   <main>
     <slot></slot>
@@ -24,6 +30,16 @@
   </footer>
 </template>
 
+<script setup>
+import { onMounted } from "vue";
+import { useWorkoutStore } from "@/stores/workoutStore";
+
+const store = useWorkoutStore();
+
+onMounted(() => {
+  store.initAuth();
+});
+</script>
 <style scoped>
 header,
 main {
@@ -40,6 +56,34 @@ h1 {
 }
 .logo img {
   width: 30px;
+}
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #2563eb;
+}
+.btn-login {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn-logout {
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 footer {
   display: flex;

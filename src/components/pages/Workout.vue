@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="programData">
     <div class="card">
       <p style="display: inline-block">
         Day
@@ -24,7 +24,7 @@
         class="fa-solid fa-bolt"
         v-if="selectedProgram % 3 == 2"
       ></i>
-      <h1>Push Workout</h1>
+      <h1>{{ workoutTypes[selectedProgram % 3] }} Workout</h1>
     </div>
     <table class="warmup">
       <thead>
@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(warm, index) in warmup" :key="index">
+        <tr v-for="(warm, index) in programData.warmup" :key="index">
           <td>
             <p>{{ warm.name }}</p>
             <button
@@ -52,8 +52,9 @@
           <td>
             <input
               type="text"
-              placeholder="14kg"
+              placeholder="-- kg"
               :aria-label="`Weight for ${warm.name}`"
+              v-model="sessionWeights[warm.name]"
             />
           </td>
         </tr>
@@ -69,7 +70,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(work, index) in workout" :key="index">
+        <tr v-for="(work, index) in programData.workout" :key="index">
           <td>
             <p>{{ work.name }}</p>
             <button
@@ -85,14 +86,15 @@
           <td>
             <input
               type="text"
-              placeholder="14kg"
+              placeholder="-- kg"
               :aria-label="`Weight for ${work.name}`"
+              v-model="sessionWeights[work.name]"
             />
           </td>
         </tr>
       </tbody>
     </table>
-    <port @close-des="closeDes" v-if="selectedDesName">
+    <portal @close-des="closeDes" v-if="selectedDesName">
       <h1>{{ selectedDesName }}</h1>
       <div>
         <small>Description</small>
@@ -100,32 +102,68 @@
           {{ selectedDesP }}
         </p>
       </div>
-    </port>
+    </portal>
     <div class="actions card">
-      <button type="button">
-        Save & Exit<i class="fa-solid fa-floppy-disk"></i>
+      <button type="button" @click="handleSave" :disabled="store.loading">
+        {{ store.loading ? "Saving..." : "Save Progress"
+        }}<i class="fa-solid fa-floppy-disk"></i>
       </button>
-      <button>Complete<i class="fa-solid fa-check"></i></button>
+      <button type="button" @click="handleComplete">
+        Complete<i class="fa-solid fa-check"></i>
+      </button>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from "vue";
-
+import { ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { workoutProgram, exerciseDescriptions } from "@/utils/index";
-import port from "@/components/Portal.vue";
+import { useWorkoutStore } from "@/stores/workoutStore";
+import portal from "@/components/ui/Portal.vue";
+
+const store = useWorkoutStore();
+const route = useRoute();
+const router = useRouter();
+
 console.log(workoutProgram);
-const selectedProgram = 0;
-const { workout, warmup } = workoutProgram[selectedProgram];
+const selectedProgram = Number(route.params.day ?? 0);
+const workoutTypes = ["Push", "Pull", "Legs"];
+
+const programData = computed(() => workoutProgram[selectedProgram]);
+
+const sessionWeights = ref({});
+
 const selectedDesName = ref(null);
 const selectedDesP = ref("");
+
+onMounted(() => {
+  if (store.userData?.weights) {
+    const savedWeights = store.userData.weights[`day-${selectedProgram}`];
+    if (savedWeights) {
+      sessionWeights.value = { ...savedWeights };
+    }
+  }
+});
+
 function showExercise(exercise) {
   selectedDesName.value = exercise;
   selectedDesP.value = exerciseDescriptions[exercise];
 }
+
 function closeDes() {
   selectedDesName.value = null;
+}
+
+async function handleSave() {
+  await store.saveDayWeights(selectedProgram, sessionWeights.value);
+  alert("progress saved successfully!");
+}
+
+async function handleComplete() {
+  await handleSave();
+  await store.markDayComplete(selectedProgram);
+  router.push("/dashboard");
 }
 </script>
 

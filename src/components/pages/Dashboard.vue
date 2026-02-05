@@ -16,7 +16,7 @@
 
 <script setup>
 import { gymHealthFacts } from "@/utils/index";
-import Grid from "@/components/Grid.vue";
+import Grid from "@/components/ui/Grid.vue";
 const tip = gymHealthFacts[Math.floor(Math.random() * gymHealthFacts.length)];
 </script>
 
